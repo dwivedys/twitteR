@@ -1,0 +1,36 @@
+#Reading feeds from Twitter using OAuth
+#First you need to log in to twitter and create an Application which R will use to access the feeds
+#use setup_twitter_oauth command to connect with the Twitter App created above
+#once the connection is established - the commands can be used to download the feeds
+
+install.packages("twitteR")
+
+consumer_key <- 'ArRXJHImKFhxfdssMGRlWe9wO'
+consumer_secret <- 'Pg0ZFo2vcYCMvuF1Y3IH27d1YsBD8ikbhuna7I7medsIb519sf'
+access_token <- '24535077-Z4opI9kpdpYwFvjEDwVMorZAgZWLI5bXC28EqHR2b'
+access_secret <- 'pyHUROHvnqrEPzh4bPECwyu8jv1eQywmoazkShHNzWO1B'
+setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
+
+#retrieve timeine
+timeLine <- homeTimeline(n = 800, retryOnRateLimit = 1000)
+
+#provide beginning and end times for tweets pertaining to a particular duration
+beginning <- as.POSIXct("2016-08-03 18:00:00 UTC")
+end <- as.POSIXct("2016-08-03 20:00:00 UTC")
+
+#get the times of the tweets
+times <- lapply(timeLine, function(x) x$created)
+these <- which(times > beginning & times < end)
+
+#get the tweets pertaining to the times mentioned
+myTweets <- timeLine[these]
+
+#convert the list to dataframe
+tweets <- twListToDF(myTweets)
+
+#preview the tweets read
+head(tweets)
+
+#Just to read the text column
+head(tweets$text)
+
